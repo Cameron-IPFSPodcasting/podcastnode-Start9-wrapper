@@ -32,7 +32,7 @@ clean:
 	rm -f scripts/*.js
 	rm -rf docker-images
 
-$(PKG_ID).s9pk: manifest.yaml instructions.md ipfspod.svg LICENSE scripts/embassy.js docker-images/aarch64.tar docker-images/x86_64.tar
+$(PKG_ID).s9pk: manifest.yaml instructions.md icon.png LICENSE scripts/embassy.js docker-images/aarch64.tar docker-images/x86_64.tar
 ifeq ($(ARCH),aarch64)
 	@echo "embassy-sdk: Preparing aarch64 package ..."
 else ifeq ($(ARCH),x86_64)
