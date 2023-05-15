@@ -171,6 +171,8 @@ while True:
   else:
     logging.info('No work.')
 
+  #Update stats.yaml
+
   #wait 10 minutes then start again
   logging.info('Sleeping 10 minutes...')
   time.sleep(600)
