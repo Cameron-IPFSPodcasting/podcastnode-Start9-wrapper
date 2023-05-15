@@ -1,4 +1,5 @@
-id: ipfs-podcasting 
+
+id: ipfs-podcasting
 title: "IPFS Podcasting"
 version: 0.6.3.1
 release-notes: "Initial Release for Start9/embassyOS"
@@ -50,22 +51,23 @@ volumes:
   main:
     type: data
 
+# IPFS webui is at /webui. tor address works only if you use http://tor-address.onion/webui 
+# Can't figure out how to configure a path /webui (and lan url doesn't work at all)
 interfaces:
-### IPFS webui is at /webui. tor address works only if you use http://tor-address.onion/webui Can't figure out how to configure a path (and lan url doesn't work at all) so removing the feature "for now". It's not necessary, just a bonus
-#  mgmt:
-#    name: IPFS UI
-#    description: Default IPFS UI
-#    tor-config:
-#      port-mapping:
-#        80: "5001"
-#    lan-config:
-#      5001:
-#        ssl: false
-#        internal: 5001
-#    ui: true
-#    protocols:
-#      - tcp
-#      - http
+  mgmt:
+    name: IPFS UI
+    description: Default IPFS UI
+    tor-config:
+      port-mapping:
+        80: "5001"
+    lan-config:
+      5001:
+        ssl: false
+        internal: 5001
+    ui: true
+    protocols:
+      - tcp
+      - http
   ipfs:
     name: IPFS Network
     description: Port 4001 for IPFS network communication
@@ -111,24 +113,25 @@ backup:
       main: "/ipfs-podcasting/ipfs"
     io-format: yaml
 
-###Another bonus feature that is causing locking errors. "gc.sh" works inside the container, but this launches a new instance(?) that conflicts with the running instance.
-#actions:
-#  cleanup:
-#    name: "Clean Up"
-#    description: "Runs garbage collection to clean up the IPFS datastore. This will remove old files that have been unpinned from IPFS."
-##   warning: There is no warning. Future versions of the service will automatically run garbage collection when necessary.
-#    allowed-statuses:
-#      - running
-#      - stopped
-#    implementation:
-#      type: docker
-#      image: main
-#      system: false
-#      entrypoint: gc.sh
-#     args: []
-#      mounts:
-#        main: /ipfs-podcasting/ipfs
-#      io-format: json
+# This is causing locking errors. "gc.sh" works inside the container,
+# but this launches a new instance(?) that conflicts with the running instance.
+# Is there an option to use the existing instance?
+actions:
+  cleanup:
+    name: "Clean Up"
+    description: "Runs garbage collection to clean up the IPFS datastore. This will remove old files that have been unpinned from IPFS."
+#   warning: There is no warning. Future versions of the service will automatically run garbage collection when necessary.
+    allowed-statuses:
+      - running
+      - stopped
+    implementation:
+      type: docker
+      image: main
+      entrypoint: gc.sh
+      args: []
+      mounts:
+        main: /ipfs-podcasting/ipfs
+      io-format: json
 
 migrations:
   from:
