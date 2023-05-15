@@ -1,2 +1,2 @@
 #!/bin/sh
-exec ipfspodcastnode.py
+exec /ipfs-podcasting/ipfspodcastnode.py

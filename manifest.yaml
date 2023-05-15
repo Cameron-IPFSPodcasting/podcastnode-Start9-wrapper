@@ -1,12 +1,13 @@
 id: ipfs-podcasting 
-title: "IPFS Podcasting Node"
-version: 0.6.9.1
+title: "IPFS Podcasting"
+version: 0.6.3.1
 release-notes: "Initial Release for Start9/embassyOS"
 license: gpl-3.0
 wrapper-repo: "https://github.com/Cameron-IPFSPodcasting/podcastnode-Start9-wrapper"
-upstream-repo: "https://github.com/Cameron-IPFSPodcasting/podcastnode-Start9"
-support-site: "https://github.com/Cameron-IPFSPodcasting/podcastnode-Start9/issues"
+upstream-repo: "https://github.com/Cameron-IPFSPodcasting/podcastnode-Start9-wrapper"
+support-site: "https://github.com/Cameron-IPFSPodcasting/podcastnode-Start9-wrapper/issues"
 marketing-site: "https://IPFSPodcasting.net/"
+donation-url: "https://IPFSPodcasting.net/Contribute"
 build: ["make"]
 
 description:
@@ -16,7 +17,7 @@ description:
 
 assets:
   license: LICENSE
-  icon: ipfspod.svg
+  icon: icon.png
   instructions: instructions.md
 
 #docker-images: image.tar
@@ -28,67 +29,57 @@ main:
   args: []
   mounts:
     main: /ipfs-podcasting/ipfs
-    cfg: /ipfs-podcasting/cfg
 
-#health-checks:
-#  web-ui:
-#    name: Web Interface
-#    success-message: The Ghost UI is accessible
-#    type: script
+health-checks:
+  web-ui:
+    name: IPFS Network
+    success-message: IPFS Network is Ready
+    type: script
 
-#For IPFS - Optional Email address - stored in comfig.yaml somewhere???
 config:
   get:
    type: script
   set:
     type: script
+properties:
+  type: script
 
-#For IPFS - Show IPFS ID, Show Peers, Show Storage, Show Network (HTTP, HTTPS, IPFS Health Check?)
-#properties:
-#  type: script
-#dependencies: {}
+dependencies: {}
 
 volumes:
   main:
     type: data
-  cfg:
-    type: data
 
 interfaces:
-  main:
-    name: IPFS Podcasting UI
-    description: View log, configure email, run garbage collection, reset
-    tor-config:
-      port-mapping:
-        80: "8675"
-    lan-config:
-      8675: 8675
-    ui: true
-    protocols:
-      - tcp
-      - http
+### IPFS webui is at /webui. tor address works only if you use http://tor-address.onion/webui Can't figure out how to configure a path (and lan url doesn't work at all) so removing the feature "for now". It's not necessary, just a bonus
+#  mgmt:
+#    name: IPFS UI
+#    description: Default IPFS UI
+#    tor-config:
+#      port-mapping:
+#        80: "5001"
+#    lan-config:
+#      5001:
+#        ssl: false
+#        internal: 5001
+#    ui: true
+#    protocols:
+#      - tcp
+#      - http
   ipfs:
-    name: IPFS
+    name: IPFS Network
     description: Port 4001 for IPFS network communication
     tor-config:
       port-mapping:
         4001: "4001"
     lan-config:
-      4001: 4001
+      4001:
+        ssl: false
+        internal: 4001
     ui: false
     protocols:
       - tcp
-  mgmt:
-    name: IPFS UI
-    description: Port 5001 for native IPFS UI
-    tor-config:
-      port-mapping:
-        5001: "5001"
-    lan-config:
-      5001: 5001
-    ui: false
-    protocols:
-      - tcp
+      - http
 
 backup:
   create:
@@ -100,10 +91,10 @@ backup:
       - duplicity
       - create
       - /mnt/backup
-      - /ipfs-podcasting/cfg
+      - /ipfs-podcasting/ipfs
     mounts:
       BACKUP: "/mnt/backup" 
-      main: "/ipfs-podcasting/cfg"
+      main: "/ipfs-podcasting/ipfs"
     io-format: yaml
   restore:
     type: docker
@@ -114,30 +105,30 @@ backup:
       - duplicity
       - restore
       - /mnt/backup
-      - /ipfs-podcasting/cfg
+      - /ipfs-podcasting/ipfs
     mounts:
       BACKUP: "/mnt/backup"
-      main: "/ipfs-podcasting/cfg"
+      main: "/ipfs-podcasting/ipfs"
     io-format: yaml
 
-#For IPFS - Garbage Collection
-actions:
-  cleanup:
-    name: "Clean Up"
-    description: "Runs garbage collection to clean up the IPFS datastore. This will remove old files that have been unpinned from IPFS. Favorite feeds & episodes will remain."
-#   warning: There is no warning. Future versions of the service will automatically run garbage collection when necessary.
-    allowed-statuses:
-      - running
-      - stopped
-    implementation:
-      type: docker
-      image: main
-      system: false
-      entrypoint: gc.sh
-      args: []
-      mounts:
-        main: /ipfs-podcasting/ipfs
-      io-format: json
+###Another bonus feature that is causing locking errors. "gc.sh" works inside the container, but this launches a new instance(?) that conflicts with the running instance.
+#actions:
+#  cleanup:
+#    name: "Clean Up"
+#    description: "Runs garbage collection to clean up the IPFS datastore. This will remove old files that have been unpinned from IPFS."
+##   warning: There is no warning. Future versions of the service will automatically run garbage collection when necessary.
+#    allowed-statuses:
+#      - running
+#      - stopped
+#    implementation:
+#      type: docker
+#      image: main
+#      system: false
+#      entrypoint: gc.sh
+#     args: []
+#      mounts:
+#        main: /ipfs-podcasting/ipfs
+#      io-format: json
 
 migrations:
   from:
