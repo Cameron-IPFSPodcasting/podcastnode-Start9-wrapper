@@ -33,4 +33,4 @@ COPY docker_entrypoint.sh /usr/local/bin
 RUN chmod a+x ipfspodcastnode.py /usr/local/bin/gc.sh /usr/local/bin/docker_entrypoint.sh
 
 #ENTRYPOINT ["python", "ipfspodcastnode.py"]
-EXPOSE 4001/tcp 5001/tcp
+#EXPOSE 4001/tcp 5001/tcp
