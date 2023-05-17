@@ -14,7 +14,7 @@ wgetpath = '/usr/bin/wget'
 wcpath = '/usr/bin/wc'
 
 #Setup logging to console
-logging.basicConfig(level=logging.INFO, format="%(asctime)s : %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 #Init IPFS (if necessary)
 if not os.path.exists('ipfs/config'):
@@ -74,6 +74,20 @@ while True:
   if speers.returncode == 0:
     peercnt = speers.stdout.decode().strip()
   payload['peers'] = peercnt
+
+  #Get Usage/Available
+  repostat = subprocess.run(ipfspath + ' repo stat -s|grep RepoSize', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  if repostat.returncode == 0:
+    repolen = repostat.stdout.decode().strip().split(':')
+    used = int(repolen[1].strip())
+  else:
+    used = 0
+
+  ipfsloc = os.getenv('IPFS_PATH')
+  if ipfsloc == None:
+    ipfsloc = '/'
+  df = os.statvfs(ipfsloc)
+  avail = df.f_bavail * df.f_frsize
 
   #Request work
   logging.info('Requesting Work...')
@@ -144,20 +158,10 @@ while True:
 
     #Report Results
     logging.info('Reporting results...')
-    #Get Usage/Available
-    repostat = subprocess.run(ipfspath + ' repo stat -s|grep RepoSize', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if repostat.returncode == 0:
-      repolen = repostat.stdout.decode().strip().split(':')
-      used = int(repolen[1].strip())
-    else:
-      used = 0
-    payload['used'] = used
 
-    ipfsloc = os.getenv('IPFS_PATH')
-    if ipfsloc == None:
-      ipfsloc = '/'
-    df = os.statvfs(ipfsloc)
-    payload['avail'] = df.f_bavail * df.f_frsize
+    #Send usage data to website
+    payload['used'] = used
+    payload['avail'] = avail
 
     try:
       response = requests.post("https://IPFSPodcasting.net/Response", timeout=120, data=payload)
@@ -171,7 +175,47 @@ while True:
   else:
     logging.info('No work.')
 
-  #Update stats.yaml
+  #Update properties
+  stats='''version: 2
+data:
+  IPFS UI (Tor):
+    type: string
+    value: N/A
+    description: IPFS Web UI over Tor.
+    copyable: true
+    qr: false
+    masked: false
+  IPFS UI (Lan):
+    type: string
+    value: N/A
+    description: IPFS Web UI over Lan.
+    copyable: true
+    qr: false
+    masked: false
+  IPFS ID:
+    type: string
+    value: ''' + payload['ipfs_id'] + '''
+    description: Your IPFS Node ID on the IPFS Network.
+    copyable: true
+    qr: false
+    masked: false
+  Peer Count:
+    type: string
+    value: ''' + payload['peers'] + '''
+    description: Number of IPFS peers connected to your node. More nodes mean better performance. If you have a low peer count visit https://ipfspodcasting.net/Help/Network for instructions to improve performance.
+    copyable: true
+    qr: false
+    masked: false
+  Disk Usage:
+    type: string
+    value: ''' + str(used) + ''' Used / ''' + str(avail) + ''' Available
+    description: Disk used by IPFS. This is the size of your IPFS Datastore which may include files not used for IPFS Podcasting.
+    copyable: true
+    qr: false
+    masked: false'''
+
+  with open('ipfs/start9/stats.yaml', 'w') as yaml_file:
+    yaml_file.write(stats)
 
   #wait 10 minutes then start again
   logging.info('Sleeping 10 minutes...')
