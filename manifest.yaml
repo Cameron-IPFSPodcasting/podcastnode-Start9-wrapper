@@ -52,22 +52,21 @@ volumes:
 
 interfaces:
 ### IPFS webui is at /webui. tor address works only if you use http://tor-address.onion/webui 
-### Can't figure out how to configure a path /webui (and lan url doesn't work at all)
-### Not necessary for production, but users ask for it.
-#  mgmt:
-#    name: IPFS UI
-#    description: Default IPFS UI
-#    tor-config:
-#      port-mapping:
-#        80: "5001"
-#    lan-config:
-#      5001:
-#        ssl: false
-#        internal: 5001
-#    ui: true
-#    protocols:
-#      - tcp
-#      - http
+### Followed ipfs-wrapper example to give instructions in the description (until the UI can add a path)
+  mgmt:
+    name: IPFS UI
+    description: Default IPFS UI - This url won't work until you add /webui to the url. Look in the Properties section for a valid url.
+    tor-config:
+      port-mapping:
+        80: "5001"
+    lan-config:
+      443:
+        ssl: true
+        internal: 5001
+    ui: false
+    protocols:
+      - tcp
+      - http
   ipfs:
     name: IPFS Network
     description: Port 4001 for IPFS network communication
