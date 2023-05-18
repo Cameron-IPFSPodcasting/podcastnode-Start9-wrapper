@@ -48,10 +48,15 @@ while True:
   #Request payload
   payload = { 'version': '0.6s', 'ipfs_id': jtxt['Identity']['PeerID'] }
 
-  #Read E-mail Config
+  #Read Start9 Config
+  email = ''
+  toraddress = 'N/A'
+  lanaddress = 'N/A'
   with open('ipfs/start9/config.yaml', 'r') as ecf:
     s9cfg = yaml.safe_load(ecf)
     email = s9cfg['email-address']
+    toraddress = 'http://' + s9cfg['tor-address'] + '/webui'
+    lanaddress = 'https://' + s9cfg['lan-address'] + '/webui'
     if email == '':
       email = 'user@example.com'
   payload['email'] = email
@@ -180,14 +185,14 @@ while True:
 data:
   IPFS UI (Tor):
     type: string
-    value: N/A
+    value: ''' + toraddress + '''
     description: IPFS Web UI over Tor.
     copyable: true
     qr: false
     masked: false
   IPFS UI (Lan):
     type: string
-    value: N/A
+    value: ''' + lanaddress + '''
     description: IPFS Web UI over Lan.
     copyable: true
     qr: false
