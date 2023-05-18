@@ -3,7 +3,7 @@
 set -e
 
 _term() { 
-  echo "Caught SIGTERM signal!" 
+  echo "Received STOP signal. Shutting Down." 
   kill -TERM "$IPFSPOD" 2>/dev/null
 }
 

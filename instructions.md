@@ -13,4 +13,3 @@ You can optionally configure an email (under `Config`), and create an account vi
 For example, a [Gold Favorite](https://ipfspodcasting.net/Help/Favorites), will download all episodes for a feed until you un-favorite. This enables fans and friends of a podcast to support the show by crowd hosting it's content.
 
 [View the FAQ](https://ipfspodcasting.net/FAQ) for more information.
-

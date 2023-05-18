@@ -1,7 +1,12 @@
 id: ipfs-podcasting
 title: "IPFS Podcasting"
 version: 0.6.3.1
-release-notes: "Initial Release for Start9/embassyOS"
+release-notes: |
+  * Initial release of IPFS Podcasting for StartOS
+  * Turn your Start9 into an IPFS node for self-hosting, crowd-hosting, and archiving of your favorite podcasts to the IPFS network.
+  * Support your favorite podcasts with your storage & bandwidth.
+  * Optionally configure your email, and manage your node from [IPFSPodcasting.net](https://IPFSPodcasting.net/).
+  * View the [FAQ](https://IPFSPodcasting.net/FAQ) to learn more.
 license: gpl-3.0
 wrapper-repo: "https://github.com/Cameron-IPFSPodcasting/podcastnode-Start9-wrapper"
 upstream-repo: "https://github.com/Cameron-IPFSPodcasting/podcastnode-Start9-wrapper"
@@ -114,12 +119,12 @@ backup:
 
 ### This is causing locking errors. "gc.sh" works inside the container,
 ### but this launches a new instance(?) that conflicts with the running instance.
-### Another "nice to have" but not necessary. Future versions will run garbage collection on demand.
+### A "nice to have" but not necessary. Future versions will run garbage collection on demand.
 #actions:
 #  cleanup:
 #    name: "Clean Up"
 #    description: "Runs garbage collection to clean up the IPFS datastore. This will remove old files that have been unpinned from IPFS."
-##   warning: There is no warning. Future versions of the service will automatically run garbage collection when necessary.
+##    warning: There is no warning. Future versions of the service will automatically run garbage collection when necessary.
 #    allowed-statuses:
 #      - running
 #      - stopped
@@ -128,8 +133,7 @@ backup:
 #      image: main
 #      entrypoint: gc.sh
 #      args: []
-#      mounts:
-#        main: /ipfs-podcasting/ipfs
+#      inject: true
 #      io-format: json
 
 migrations:
