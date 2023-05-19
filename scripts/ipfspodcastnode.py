@@ -181,6 +181,34 @@ while True:
     logging.info('No work.')
 
   #Update properties
+
+  #Calculate human readable disk usage
+  percent = round(used/(used+avail)*100, 1)
+
+  if used < (1024*1024*1024):
+    used = str(round(used/1024/1024, 1)) + ' MB'
+  elif used < (1024*1024*1024*1024):
+    used = str(round(used/1024/1024/1024, 1)) + ' GB'
+  else:
+    used = str(round(used/1024/1024/1024/1024, 2)) + ' TB'
+
+  if avail < (1024*1024*1024):
+    avail = str(round(avail/1024/1024, 1)) + ' MB'
+  elif avail < (1024*1024*1024*1024):
+    avail = str(round(avail/1024/1024/1024, 1)) + ' GB'
+  else:
+    avail = str(round(avail/1024/1024/1024/1024, 2)) + ' TB'
+
+  #Calculate Peer status. 0-100 peers = Red/Poor. 100-400 peers = Yellow/Good. 400+ peers = Green/Best
+  peertxt = str(payload['peers'])
+  if int(payload['peers']) > 400:
+    peertxt += ' - Excellent! ✅'
+  elif int(payload['peers']) > 100:
+    peertxt += ' - Good 🟡'
+  else:
+    peertxt += ' - Poor 🔴 (visit https://ipfspodcasting.net/Help/Network for tips to improve your network performance)'
+
+  #Build YAML String
   stats='''version: 2
 data:
   IPFS UI (Tor):
@@ -206,14 +234,14 @@ data:
     masked: false
   Peer Count:
     type: string
-    value: ''' + payload['peers'] + '''
-    description: Number of IPFS peers connected to your node. More nodes mean better performance. If you have a low peer count visit https://ipfspodcasting.net/Help/Network for instructions to improve performance.
+    value: ''' + peertxt + '''
+    description: Number of IPFS peers connected to your node. More nodes mean better performance. Peer count fluctuates based on your network connectivity. If you have a low peer count visit https://ipfspodcasting.net/Help/Network for tips to improve performance.
     copyable: true
     qr: false
     masked: false
   Disk Usage:
     type: string
-    value: ''' + str(used) + ''' Used / ''' + str(avail) + ''' Available
+    value: ''' + str(used) + ''' Used (''' + str(percent) + '''%) of ''' + str(avail) + ''' Available
     description: Disk used by IPFS. This is the size of your IPFS Datastore which may include files not used for IPFS Podcasting.
     copyable: true
     qr: false
