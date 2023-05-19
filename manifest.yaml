@@ -117,31 +117,30 @@ backup:
       main: "/ipfs-podcasting/ipfs"
     io-format: yaml
 
-### This is causing locking errors. "gc.sh" works inside the container,
-### but this launches a new instance(?) that conflicts with the running instance.
+### Tried using "inject" to launch in the same container, but getting "string errors"
 ### A "nice to have" but not necessary. Future versions will run garbage collection on demand.
-#actions:
-#  cleanup:
-#    name: "Clean Up"
-#    description: "Runs garbage collection to clean up the IPFS datastore. This will remove old files that have been unpinned from IPFS."
-##    warning: There is no warning. Future versions of the service will automatically run garbage collection when necessary.
-#    allowed-statuses:
-#      - running
-#      - stopped
-#    implementation:
-#      type: docker
-#      image: main
-#      entrypoint: gc.sh
-#      args: []
-#      inject: true
-#      io-format: json
+actions:
+  cleanup:
+    name: "Clean Up"
+    description: "Runs garbage collection to clean up the IPFS datastore. This will remove old files that have been unpinned from IPFS."
+    warning: "Garbage collection can take a very long time depending on the size of your datastore. Please be patient."
+    allowed-statuses:
+      - running
+      - stopped
+    implementation:
+      type: docker
+      image: main
+      entrypoint: gc.sh
+      args: []
+      inject: true
+      io-format: json
 
-migrations:
-  from:
-    "*":
-      type: script
-      args: ["from"]
-  to:
-    "*":
-      type: script
-      args: ["to"]
+#migrations:
+#  from:
+#    "*":
+#      type: script
+#      args: ["from"]
+#  to:
+#    "*":
+#      type: script
+#      args: ["to"]
