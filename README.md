@@ -1,4 +1,4 @@
-# Wrapper for ipfs-podcasting
+# Start9 wrapper for ipfs-podcasting
 
 This package creates an IPFS Podcasting node on your Start9 device. It is used for self-hosting, crowd-hosting, and archiving your favorite podcasts to the IPFS network. Visit [https://ipfspodcasting.net](IPFSPodcasting.net) for more information.
 
